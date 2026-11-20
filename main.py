@@ -26,9 +26,21 @@ def main():
     # Fail loudly if the committed image is missing: a silent empty
     # output would look like success to the grader's file checks.
     if not os.path.isfile(SRC):
-        raise FileNotFoundError("committed image not found: " + SRC)
+        raise FileNotFoundError(
+            "committed image not found: entry.png (expected at "
+            + SRC
+            + "); fix: run draw.py at build time to regenerate "
+            "entry.png and commit it next to main.py"
+        )
     os.makedirs(OUT, exist_ok=True)
-    shutil.copyfile(SRC, os.path.join(OUT, "entry.png"))
+    dest = os.path.join(OUT, "entry.png")
+    try:
+        shutil.copyfile(SRC, dest)
+    except OSError as exc:
+        raise OSError(
+            "failed to copy entry.png from " + SRC + " to " + dest
+            + ": " + str(exc)
+        ) from exc
 
 
 if __name__ == "__main__":
